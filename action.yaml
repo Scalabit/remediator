@@ -1,0 +1,57 @@
+name: 'Workflow Security Scanner'
+description: 'AI agent that analyzes and fixes GitHub workflows'
+branding:
+  icon: 'shield'
+  color: 'blue'
+inputs:
+  api-token:
+    description: 'API token for workflow scanner service'
+    required: true
+  github-token:
+    description: 'GitHub token with repo permissions'
+    required: true
+  llm-api-key:
+    description: 'LLM API key (OpenAI, Anthropic, or Gemini)'
+    required: true
+  repository:
+    description: 'Repository in format owner/repo'
+    required: false
+    default: ${{ github.repository }}
+  service-url:
+    description: 'Service URL (for testing)'
+    required: false
+    default: 'https://workflow-scanner-36bg3tpnra-lz.a.run.app'
+outputs:
+  job-id:
+    description: 'Batch job ID for tracking'
+runs:
+  using: 'composite'
+  steps:
+    - name: Scan workflows
+      shell: bash
+      run: |
+        echo "Starting workflow security scan..."
+        # Prepare source
+        SOURCE_BASE64=$(tar -czf - . | base64 -w 0)
+        # Submit scan
+        RESPONSE=$(curl -s -w "%{http_code}" -X POST \
+          "${{ inputs.service-url }}/api/scan-workflows" \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ inputs.api-token }}" \
+          -d "{
+            \"repository\": \"${{ inputs.repository }}\",
+            \"github_token\": \"${{ inputs.github-token }}\", 
+            \"source_base64\": \"${SOURCE_BASE64}\"
+          }")
+        HTTP_CODE="${RESPONSE: -3}"
+        BODY="${RESPONSE%???}"
+        if [ "$HTTP_CODE" = "202" ]; then
+          JOB_ID=$(echo "$BODY" | jq -r '.message' | grep -o 'Job ID: [^"]*' | cut -d' ' -f3)
+          echo "job-id=$JOB_ID" >> $GITHUB_OUTPUT
+          echo "Scan submitted successfully. Job ID: $JOB_ID"
+        else
+          ERROR=$(echo "$BODY" | jq -r '.error // "Unknown error"')
+          echo "::error::Scan failed: $ERROR"
+          exit 1
+        fi
+
