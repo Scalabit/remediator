@@ -31,27 +31,44 @@ runs:
       shell: bash
       run: |
         echo "Starting workflow security scan..."
-        # Prepare source
-        SOURCE_BASE64=$(tar -czf - . | base64 -w 0)
-        # Submit scan
-        RESPONSE=$(curl -s -w "%{http_code}" -X POST \
-          "${{ inputs.service-url }}/api/scan-workflows" \
-          -H "Content-Type: application/json" \
-          -H "Authorization: Bearer ${{ inputs.api-token }}" \
-          -d "{
-            \"repository\": \"${{ inputs.repository }}\",
-            \"github_token\": \"${{ inputs.github-token }}\", 
-            \"source_base64\": \"${SOURCE_BASE64}\"
-          }")
+        
+        echo "Preparing secure request payload..."
+        
+        # Create JSON payload and pipe directly to curl - no temp files or variables
+        RESPONSE=$(
+          {
+            echo '{'
+            echo "  \"repository\": \"${{ inputs.repository }}\","
+            echo "  \"github_token\": \"${{ inputs.github-token }}\","
+            echo "  \"llm_api_key\": \"${{ inputs.llm-api-key }}\","
+            echo -n "  \"source_base64\": \""
+            tar -czf - . | base64 -w 0  # Stream directly without storing
+            echo '"'
+            echo '}'
+          } | curl -s -w "%{http_code}" -X POST \
+            "${{ inputs.service-url }}/api/scan-workflows" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ inputs.api-token }}" \
+            -d @-
+        )
+        
+        # Extract HTTP code and response body
         HTTP_CODE="${RESPONSE: -3}"
         BODY="${RESPONSE%???}"
+        
+        echo "Response Code: $HTTP_CODE"
+        
+        # Handle response
         if [ "$HTTP_CODE" = "202" ]; then
-          JOB_ID=$(echo "$BODY" | jq -r '.message' | grep -o 'Job ID: [^"]*' | cut -d' ' -f3)
-          echo "job-id=$JOB_ID" >> $GITHUB_OUTPUT
-          echo "Scan submitted successfully. Job ID: $JOB_ID"
+          JOB_ID=$(echo "$BODY" | jq -r '.message // ""' | grep -o 'Job ID: [^"]*' | cut -d' ' -f3 || echo "")
+          if [ -n "$JOB_ID" ]; then
+            echo "job-id=$JOB_ID" >> $GITHUB_OUTPUT
+            echo "Scan submitted successfully. Job ID: $JOB_ID"
+          else
+            echo "Scan submitted successfully"
+          fi
         else
-          ERROR=$(echo "$BODY" | jq -r '.error // "Unknown error"')
-          echo "::error::Scan failed: $ERROR"
+          ERROR=$(echo "$BODY" | jq -r '.error // "Unknown error occurred"')
+          echo "::error::Scan failed (HTTP $HTTP_CODE): $ERROR"
           exit 1
         fi
-
