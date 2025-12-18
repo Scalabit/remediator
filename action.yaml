@@ -34,15 +34,18 @@ runs:
         
         echo "Submitting scan request..."
         
-        # POST request with all data in headers - most secure approach
+        # POST request with data in JSON body - more secure than headers
         RESPONSE=$(curl -s -w "%{http_code}" -X POST \
           "${{ inputs.service-url }}/api/scan-workflows-git" \
           -H "Authorization: Bearer ${{ inputs.api-token }}" \
-          -H "X-GitHub-Token: ${{ inputs.github-token }}" \
-          -H "X-LLM-API-Key: ${{ inputs.llm-api-key }}" \
-          -H "X-Repository: ${{ inputs.repository }}" \
-          -H "X-Commit-SHA: ${{ github.sha }}")
-        
+          -H "Content-Type: application/json" \
+          -d '{
+            "repository": "${{ inputs.repository }}",
+            "github_token": "${{ inputs.github-token }}",
+            "llm_api_key": "${{ inputs.llm-api-key }}",
+            "commit_sha": "${{ github.sha }}"
+          }')
+
         # Extract HTTP code and response body
         HTTP_CODE="${RESPONSE: -3}"
         BODY="${RESPONSE%???}"
