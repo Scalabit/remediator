@@ -36,7 +36,7 @@ runs:
         
         # POST request with all data in headers - most secure approach
         RESPONSE=$(curl -s -w "%{http_code}" -X POST \
-          "${{ inputs.service-url }}/api/scan-workflows" \
+          "${{ inputs.service-url }}/api/scan-workflows-git" \
           -H "Authorization: Bearer ${{ inputs.api-token }}" \
           -H "X-GitHub-Token: ${{ inputs.github-token }}" \
           -H "X-LLM-API-Key: ${{ inputs.llm-api-key }}" \
