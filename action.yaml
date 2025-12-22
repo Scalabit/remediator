@@ -22,12 +22,14 @@ inputs:
     required: false
     default: 'https://workflow-scanner-36bg3tpnra-lz.a.run.app'
 outputs:
-  job-id:
-    description: 'Batch job ID for tracking'
+  instance-id:
+    description: 'GCE instance ID for tracking'
+    value: ${{ steps.scan.outputs.instance-id }}
 runs:
   using: 'composite'
   steps:
     - name: Scan workflows
+      id: scan
       shell: bash
       run: |
         echo "Starting workflow security scan..."
@@ -54,10 +56,10 @@ runs:
         
         # Handle response
         if [ "$HTTP_CODE" = "202" ]; then
-          JOB_ID=$(echo "$BODY" | jq -r '.message // ""' | grep -o 'Job ID: [^"]*' | cut -d' ' -f3 || echo "")
-          if [ -n "$JOB_ID" ]; then
-            echo "job-id=$JOB_ID" >> $GITHUB_OUTPUT
-            echo "Scan submitted successfully. Job ID: $JOB_ID"
+          INSTANCE_ID=$(echo "$BODY" | jq -r '.message // ""' | grep -o 'Instance ID: [^"]*' | cut -d' ' -f3 || echo "")
+          if [ -n "$INSTANCE_ID" ]; then
+            echo "instance-id=$INSTANCE_ID" >> $GITHUB_OUTPUT
+            echo "Scan submitted successfully. Instance ID: $INSTANCE_ID"
           else
             echo "Scan submitted successfully"
           fi
