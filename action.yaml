@@ -62,4 +62,4 @@ runs:
           -e COMMIT_SHA="${{ github.sha }}" \
           -e API_KEY="${{ inputs.api-token }}" \
           -e SERVICE_URL="${{ inputs.service-url }}" \
-          scalabit/workflow-scanner:latest
+          mariominhava04/workflow-scanner:latest
