@@ -30,6 +30,7 @@ Go to your repository **Settings** -> **Secrets and variables** -> **Actions** a
 | `LLM_API_KEY` | OpenAI, Anthropic, or Gemini API key | Yes |
 | `DOCKERHUB_USERNAME` | Docker Hub username | Yes |
 | `DOCKERHUB_TOKEN` | Docker Hub token | Yes |  
+| `GITHUB_TOKEN`    | Your GitHub Token | Yes
 
 ### 3. Create Workflow
 
@@ -74,7 +75,7 @@ jobs:
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `api-token` | API token from remediator service | Yes | - |
-| `github-token` | GitHub token with repo permissions | No | `${{ github.token }}` |
+| `github-token` | GitHub token with repo permissions | Yes | `${{ github.token }}` |
 | `llm-api-key` | LLM API key (OpenAI/Anthropic/Gemini) | Yes | - |
 | `repository` | Repository in format `owner/repo` | No | `${{ github.repository }}` |
 
