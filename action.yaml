@@ -21,7 +21,7 @@ inputs:
   service-url:
     description: 'Service URL (for testing)'
     required: false
-    default: 'https://workflow-scanner-36bg3tpnra-lz.a.run.app'
+    default: 'https://remediator.ai'
   commit-sha:
     description: 'Optional: commit sha to scan in the target repository (defaults to scanning default branch if empty)'
     required: false
