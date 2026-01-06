@@ -22,6 +22,11 @@ inputs:
     description: 'Service URL (for testing)'
     required: false
     default: 'https://workflow-scanner-36bg3tpnra-lz.a.run.app'
+  target-branch:
+      description: 'Target branch for pull requests'
+      required: false
+      default: 'main'
+
 outputs:
   instance-id:
     description: 'GCE instance ID for tracking'
