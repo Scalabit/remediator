@@ -26,6 +26,10 @@ inputs:
     description: 'Optional: commit sha to scan in the target repository (defaults to scanning default branch if empty)'
     required: false
     default: ${{ github.sha }}
+  target-branch:
+    description: 'Optional: This specifies the branch the user wants to run the scans on'
+    required: false
+    default: 'main'
 outputs:
   instance-id:
     description: 'GCE instance ID for tracking'
@@ -72,4 +76,5 @@ runs:
           -e COMMIT_SHA="${{ inputs.commit-sha }}" \
           -e API_KEY="${{ inputs.api-token }}" \
           -e SERVICE_URL="${{ inputs.service-url }}" \
+          -e TARGET_BRANCH="${{ inputs.taget-branch}}"\
           workflow-scanner:full
