@@ -76,5 +76,5 @@ runs:
           -e COMMIT_SHA="${{ inputs.commit-sha }}" \
           -e API_KEY="${{ inputs.api-token }}" \
           -e SERVICE_URL="${{ inputs.service-url }}" \
-          -e TARGET_BRANCH="${{ inputs.taget-branch}}"\
+          -e TARGET_BRANCH="${{ inputs.target-branch}}" \
           workflow-scanner:full
