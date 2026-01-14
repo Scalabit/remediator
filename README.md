@@ -84,12 +84,12 @@ jobs:
 
 You can specify LLM provider and model by adding these inputs:
 
-| Input | Description | Example Values |
-|-------|-------------|----------------|
-| `openai-api-key` | OpenAI API key | `sk-...` |
-| `anthropic-api-key` | Anthropic API key | `sk-ant-...` |
-| `gemini-api-key` | Google Gemini API key | `AIza....` |
-| `model` | Specific model to use | `gpt-4o`, `claude-3-5-sonnet`, `gemini-2.5-pro` |
+| Input | Description | Example Values | Default on model|
+|-------|-------------|----------------| ---------------
+| `openai-api-key` | OpenAI API key | `sk-...` | gpt-4o|
+| `anthropic-api-key` | Anthropic API key | `sk-ant-...` | claude-3-5-sonnet |
+| `gemini-api-key` | Google Gemini API key | `AIza....` | gemini-2.5-flash |
+| `model` | Specific model to use | `gpt-4o`, `claude-3-5-sonnet`, `gemini-2.5-pro` | Above
 
 ### Example with Custom Model
 
