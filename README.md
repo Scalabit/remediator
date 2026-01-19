@@ -78,10 +78,10 @@ You can specify LLM provider and model by adding these inputs:
 
 | Input | Description | Example Values | Default on model|
 |-------|-------------|----------------| ---------------
-| `openai-api-key` | OpenAI API key | `sk-...` | gpt-5|
+| `openai-api-key` | OpenAI API key | `sk-...` | gpt-4.1|
 | `anthropic-api-key` | Anthropic API key | `sk-ant-...` | claude-sonnet-4-5 |
 | `gemini-api-key` | Google Gemini API key | `AIza....` | gemini-2.5-pro |
-| `model` | Specific model to use | `gpt-5`, `claude-sonnet-4-5`, `gemini-2.5-pro` | Above
+| `model` | Specific model to use | `gpt-4.1`, `claude-sonnet-4-5`, `gemini-2.5-pro` | Above
 
 ### Example with Custom Model
 
