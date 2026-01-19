@@ -28,8 +28,6 @@ Go to your repository **Settings** -> **Secrets and variables** -> **Actions** a
 |-------------|-------------|----------|
 | `FS_API_TOKEN` | Your premium API token from remediator | Yes |
 | `GH_PAT` | GitHub Personal Access Token with repo permissions | Yes |
-| `DOCKERHUB_USERNAME` | Docker Hub username | Yes |
-| `DOCKERHUB_TOKEN` | Docker Hub token | Yes |
 
 ### 3. Create Workflow
 
@@ -56,12 +54,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
       - name: Run workflow scanner
         uses: Scalabit/workflow-scanner-action@master
         with:
@@ -76,7 +68,7 @@ jobs:
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `api-token` | API token from remediator service | Yes | - |
-| `github-token` | GitHub token with repo permissions | No | `${{ github.token }}` |
+| `github-token` | GitHub token with repo permissions | Yes | `${{ github.token }}` |
 | `repository` | Repository in format `owner/repo` | No | `${{ github.repository }}` |
 | `target-branch` | Branch to scan in the target repository | No | `main` |
 
@@ -113,6 +105,7 @@ This action does not produce any outputs. It scans your workflows and creates a 
 - **Invalid API token**: Check secrets and subscription status
 - **Permission errors**: Verify GitHub token has repo access
 - **Missing secrets**: Ensure all required secrets are set
+- **Docker build issues**: The action builds containers locally, no Docker Hub authentication required
 
 [Get started at remediator.ai](https://remediator.ai/)
 
