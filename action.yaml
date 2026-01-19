@@ -70,11 +70,9 @@ runs:
         
         echo "API token validated successfully"
         
-        # Use the self-contained scanner with Docker-in-Docker and Dagger
-        echo "Building scanner with integrated Dagger support..."
-        # Make sure we're in the right directory with dagger.json
-        ls -la dagger.json || echo "Warning: dagger.json not found"
-        docker build -f scanner.Dockerfile -t workflow-scanner:full .
+        # Pull and use the pre-built scanner from Docker Hub
+        echo "Pulling scanner from Docker Hub..."
+        docker pull mariominhava04/workflow-scanner:latest
         
         echo "Running self-contained scanner..."
         docker run --rm \
